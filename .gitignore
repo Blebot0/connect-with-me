@@ -1,0 +1,9 @@
+//
+//  .gitignore
+//  connect-with-me
+//
+//  Created by Keshav Kapur on 18/05/25.
+//
+
+**.xcodeproj/**
+
