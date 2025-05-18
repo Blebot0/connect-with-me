@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct ContactDetailView: View {
     @Binding var contacts: [Contact]
     let index: Int
@@ -18,37 +16,38 @@ struct ContactDetailView: View {
     @State private var showingDeleteAlert = false
 
     var body: some View {
-        // If contact at index no longer exists (e.g. was deleted), dismiss the view
         if index >= contacts.count {
             Color.clear
-                .onAppear {
-                    dismiss()
-                }
+                .onAppear { dismiss() }
         } else {
             let contact = contacts[index]
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 24) {
+
+                    // Name Header
                     Text(contact.name)
-                        .font(.largeTitle)
-                        .bold()
+                        .font(.system(size: 32, weight: .bold))
+                        .padding(.bottom, 8)
 
-                    if let phone = contact.phoneNumber, !phone.isEmpty {
-                        HStack {
-                            Image(systemName: "phone")
-                            Text(phone)
+                    // Basic Info
+                    VStack(alignment: .leading, spacing: 12) {
+                        if let phone = contact.phoneNumber, !phone.isEmpty {
+                            Label(phone, systemImage: "phone.fill")
+                                .font(.body)
+                                .foregroundColor(.blue)
                         }
-                        .font(.body)
+
+                        Label("Bucket: \(contact.bucket)", systemImage: "folder.fill")
+                            .font(.body)
+                            .foregroundColor(.secondary)
                     }
 
-                    HStack {
-                        Image(systemName: "folder")
-                        Text("Bucket: \(contact.bucket)")
-                    }
-                    .font(.body)
+                    Divider()
 
+                    // Social Links Section
                     if !contact.socialLinks.isEmpty {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text("Social Links")
                                 .font(.headline)
 
@@ -62,44 +61,57 @@ struct ContactDetailView: View {
                                             .foregroundColor(.blue)
                                             .lineLimit(1)
                                             .truncationMode(.middle)
+                                            .font(.footnote)
                                     }
                                 }
                             }
                         }
                     }
 
+                    // Hashtags Section
                     if !contact.hashtags.isEmpty {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text("Hashtags")
                                 .font(.headline)
+
                             WrapView(items: contact.hashtags) { tag in
-                                Text(tag)
-                                    .padding(6)
+                                Text("#\(tag)")
+                                    .font(.caption)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
                                     .background(Color.gray.opacity(0.2))
-                                    .cornerRadius(8)
+                                    .foregroundColor(.primary)
+                                    .cornerRadius(12)
                             }
                         }
                     }
 
                     Spacer()
+
+                    // Actions
+                    HStack {
+                        Button(action: {
+                            showingEdit = true
+                        }) {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                        .buttonStyle(.borderedProminent)
+
+                        Spacer()
+
+                        Button(role: .destructive) {
+                            showingDeleteAlert = true
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                    .padding(.top, 24)
                 }
                 .padding()
             }
             .navigationTitle("Contact Details")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button("Edit") {
-                        showingEdit = true
-                    }
-
-                    Button(role: .destructive) {
-                        showingDeleteAlert = true
-                    } label: {
-                        Image(systemName: "trash")
-                    }
-                }
-            }
             .sheet(isPresented: $showingEdit) {
                 EditContactView(contact: $contacts[index])
             }

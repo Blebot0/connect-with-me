@@ -72,7 +72,7 @@ struct AddContactView: View {
                         Button("Add") {
                             let trimmed = hashtagInput.trimmingCharacters(in: .whitespacesAndNewlines)
                             if !trimmed.isEmpty {
-                                hashtags.append(trimmed.hasPrefix("#") ? trimmed : "#\(trimmed)")
+                                hashtags.append(trimmed.hasPrefix("#") ? trimmed : "\(trimmed)")
                                 hashtagInput = ""
                             }
                         }
