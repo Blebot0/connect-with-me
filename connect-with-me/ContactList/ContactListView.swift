@@ -52,13 +52,17 @@ struct ContactListView: View {
                 } else {
                     List {
                         ForEach(filteredContacts) { contact in
-                            NavigationLink(destination: ContactDetailView(contact: contact)) {
-                                VStack(alignment: .leading) {
-                                    Text(contact.name)
-                                        .font(.headline)
-                                    Text(contact.bucket)
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
+                            if let index = contacts.firstIndex(where: { $0.id == contact.id }) {
+                                NavigationLink {
+                                    ContactDetailView(contacts: $contacts, index: index)
+                                } label: {
+                                    VStack(alignment: .leading) {
+                                        Text(contact.name)
+                                            .font(.headline)
+                                        Text(contact.bucket)
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                    }
                                 }
                             }
                         }
